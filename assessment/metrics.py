@@ -11,32 +11,45 @@ class Metric(metaclass=ABCMeta):
     return
 
 class hvRPD(Metric):
-  refpoint = []
   def _setup(self, _nobj, _bound):
-    self.refpoint = []
     refpoint = _bound * 1.1
-    for i in range(0, _nobj):
-      self.refpoint.append(refpoint)
+    self.hv = FPL()
+    self.hv._setup(_nobj, refpoint)
       
   def _compute(self, _front_file, _ref_file, _in_ext="_dat", _out_ext="_rpd"):
-    front_file = "{}{}".format(_front_file, _in_ext)
-    front_handler = open(front_file, "r")
-    hv_file = "{}_hv".format(front_file)
-    hv_handler = open(hv_file, "w+")
-
-    subprocess.call(["/home/lbezerra/bin/hv", "-r {}".format(' '.join(str(e) for e in self.refpoint))], stdin=front_handler, stdout=hv_handler, stderr=subprocess.PIPE)
-    if os.stat(hv_file).st_size > 0:
-      hv_handler.seek(0)
-      run_hv = float(hv_handler.read())
+    run_hv = self.hv._compute("{}{}".format(_front_file, _in_ext), _ref_file)
+    if run_hv == -12.3:
+      hv_rpd = 5
+    else:
       ref_handler = open(_ref_file, "r")
       ref_hv = float(ref_handler.read())
       hv_rpd = (ref_hv - run_hv) / ref_hv
+    return hv_rpd
+
+class FPL(Metric):
+  refpoint = []
+  def _setup(self, _nobj, _refpoint):
+    self.refpoint = []
+    for i in range(0, _nobj):
+      self.refpoint.append(_refpoint)
+      
+  def _compute(self, _front_file, _ref_file, _out_ext="_hv"):
+    front_handler = open(_front_file, "r")
+    hv_file = "{}_hv".format(_front_file)
+    hv_handler = open(hv_file, "w+")
+
+    subprocess.call(["/home/lbezerra/bin/hv", "-r {}".format(' '.join(str(e) for e in self.refpoint))], stdin=front_handler, stdout=hv_handler, stderr=subprocess.PIPE)
+    
+    if os.stat(hv_file).st_size > 0:
+      hv_handler.seek(0)
+      run_hv = float(hv_handler.read())
     else:
-      hv_rpd = 5
+      run_hv = -12.3
+
     front_handler.close()
     hv_handler.close()
-    os.unlink("{}_hv".format(front_file))
-    return hv_rpd
+    os.unlink(hv_file)
+    return run_hv
 
 class unEps(Metric):
   def _setup(self, _nobj, _bound):

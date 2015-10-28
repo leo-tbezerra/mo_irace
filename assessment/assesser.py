@@ -1,3 +1,4 @@
+import os 
 class Assesser():
   persist = True
   bounds = {}
