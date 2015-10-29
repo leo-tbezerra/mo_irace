@@ -14,12 +14,14 @@ class IBEAHookRun(TECHookRun):
 
   def _parse(self, args):
     super()._parse(args[0:3])
+    args = args[3:]    
 
-    self.cand_params["pop_size"] = args[3].split("=")[1]
-    nb_offspring = AutoMOEATranslator._parseRatio(self.cand_params["pop_size"], args[4])
+    self.cand_params["pop_size"] = self._consumeParam(args)
+    nb_offspring_ratio = self._consumeParam(args, False)
+    nb_offspring = AutoMOEATranslator._parseRatio(self.cand_params["pop_size"], nb_offspring_ratio)
     self.cand_params["nb_offspring"] = "{:.0f}".format(nb_offspring)
 
-    super()._parseEngine(args[5:])
+    super()._parseEngine(args)
     if self.cand_params["engine"] == "GA":
       self.cand_params["pop_refinement"] = "IndicatorBased(Epsilon)"
     else:
@@ -42,11 +44,12 @@ class MOGAHookRun(TECHookRun):
 
   def _parse(self, args):
     super()._parse(args[0:3])
+    args = args[3:]    
 
-    self.cand_params["pop_size"] = args[3].split("=")[1]
-    super()._parseEngine(args[5:])
-    sigma = self._consumeParam(args, False)
+    self.cand_params["pop_size"] = self._consumeParam(args)
+    super()._parseEngine(args)
     if self.cand_params["engine"] == "GA":
+      sigma = self._consumeParam(args, False)
       self.cand_params["pop_diversity"] = "Sharing({})".format(sigma)
     else:
       self.cand_params["pop_diversity"] = "Dummy"

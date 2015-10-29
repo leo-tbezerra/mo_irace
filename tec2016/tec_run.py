@@ -32,7 +32,7 @@ class TECHookRun(HookRun):
       if single_bit == "1":
         self.cand_params["mut_vrate"] = "{:.4f}".format(1.0 / self.problem_params["size"])
       else:
-        self.cand_params["mut_vrate"] = self._consumeParam(args)
+        self.cand_params["mut_vrate"] = self._consumeParam(args, False)
       self.cand_params["eta_mut"] = self._consumeParam(args)
 
     else:
