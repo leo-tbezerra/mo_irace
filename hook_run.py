@@ -45,7 +45,7 @@ class HookRun(metaclass=ABCMeta):
       for key, value in results.items():
         out_file = "{}_{}".format(self.stdout, key)
         out_handler = open(out_file, "w")
-        out_handler.write(str(value))
+        out_handler.write("{}\n".format(value))
         out_handler.close()
 
   def _cmdLine(self):
