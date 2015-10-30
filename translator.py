@@ -9,6 +9,28 @@ class Translator:
       translated_params += "{}{} ".format(self.params[key][0], self.params[key][1])
     return self.problem_params + translated_params + self.extra_params
 
+class OrderedTranslator(Translator):
+  order = ()
+  def __init__(self, _problem_params, _cand_params, _fixed_params, _extra_params):
+    self.params = _problem_params.copy()
+    self.params.update(_cand_params)
+    self.params.update(_fixed_params)
+    self.params.update(_extra_params)
+
+  def _translate(self):
+    cmdline = ""
+    for key in self.order:
+      if key in self.params:
+        cmdline += " {}".format(self.params[key])
+    return cmdline
+  
+class MOEADTranslator(OrderedTranslator):
+  order = ("problem", "size", "nobj", "pop_size", "niche_ratio", "delta", "limit", "tsize", "nu", "engine", "de_cr", "de_f", 
+            "cross_rate", "eta_cross", "mut_rate", "mut_vrate", "eta_mut","aggregation", "pbi_penalty", "seed", "evals", "weight_set")
+
+class CMASharkTranslator(OrderedTranslator):
+  order = ("problem", "nobj", "size", "evals", "time", "seed", "pop_size", "sigma", "notion", "indicator", "steady")
+
 class AutoMOEATranslator(Translator):
   all_params = {"pop_size": ["--popSize=", 0], "nb_offspring": ["--nbOffspring=", "100%"], "pop_select": ["--popSelection=", "Random"],
             "pop_setpart": ["--popSetPart=", "Dummy"], "pop_refinement": ["--popRefinement=", "Dummy"], "pop_diversity": ["--popDiversity=", "Dummy"], 

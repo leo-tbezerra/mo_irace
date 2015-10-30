@@ -32,12 +32,13 @@ class HookRun(metaclass=ABCMeta):
     errfile = open(self.stderr, "w")
     logfile = open(self.stdlog, "w")
     logfile.write("{} {}".format(self.exe, self.command_line))
-    subprocess.call([self.exe, self.command_line], stdout=outfile, stderr=errfile)
+    subprocess.call("{} {}".format(self.exe, self.command_line), stdout=outfile, stderr=errfile, shell=True)
 
     results = self.assesser._compute(self.stdout, "{}.hv".format(self.problem_name), "{}.front".format(self.problem_name))
 
     if self.irace:
       print(results[self.irace_metric])
+      return
       os.unlink(self.stdout)
       os.unlink(self.stderr)
       os.unlink(self.stdlog)
@@ -49,11 +50,17 @@ class HookRun(metaclass=ABCMeta):
         out_handler.close()
 
   def _cmdLine(self):
-    if self.translator == "Paradiseo":
-      _translator = AutoMOEATranslator(self.problem_params, self.fixed_params, self.cand_params, self.extra_params)
-    else:
-      _translator = Translator()
+    _translator = self.translator(self.problem_params, self.fixed_params, self.cand_params, self.extra_params)
     self.command_line = _translator._translate()
+
+  def _consumeParam(self, _args):
+    value = None
+    if '=' in _args[0]:
+      value = _args[0].split("=")[1]
+    else:
+      value = _args[0]
+    _args.pop(0)
+    return value
         
   @abstractmethod
   def _parse(self, args):

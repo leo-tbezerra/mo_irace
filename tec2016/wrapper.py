@@ -14,13 +14,16 @@ if irace["flag"]:
   irace["metric"] = sys.argv[6]
   offset=7
 
+if algo == "moead":
+  bin = "/home/lbezerra/bin/moead_cec"
+elif algo == "cma":
+  bin = "/home/lbezerra/bin/mo-cma-es"
+else:
+  bin = "/home/lbezerra/bin/AutoMOEA-continuous-{}D".format(nobj)
+
 handler = None
-handlers = { "ibea": IBEAHookRun, "moga": MOGAHookRun, "hype" : HypeHookRun, "nsga": NSGA2HookRun, "spea": SPEA2HookRun, "sms": SMSHookRun }
-handler = handlers[algo](nobj, "/home/lbezerra/bin/AutoMOEA-continuous-{}D".format(nobj), evals, time, _irace = irace)
-#if algo = "ibea":
-#  handler = IBEAHookRun(nobj, "/home/lbezerra/bin/AutoMOEA-continuous-3D", evals, time, _irace = irace)
-#elif algo = "moga":
-#  handler = MOGAHookRun(nobj, "/home/lbezerra/bin/AutoMOEA-continuous-3D", evals, time, _irace = irace)
+handlers = { "ibea": IBEAHookRun, "moga": MOGAHookRun, "hype" : HypeHookRun, "nsga": NSGA2HookRun, "spea": SPEA2HookRun, "sms": SMSHookRun, "moead": MOEADHookRun, "cma": CMAHookRun }
+handler = handlers[algo](nobj, bin, evals, time, _irace = irace)
 
 handler._parse(sys.argv[offset:])
 handler._run()
