@@ -15,7 +15,7 @@ if irace["flag"]:
   offset=7
 
 handler = None
-handlers = { "ibea": IBEAHookRun, "moga": MOGAHookRun }
+handlers = { "ibea": IBEAHookRun, "moga": MOGAHookRun, "hype" : HypeHookRun, "nsga": NSGA2HookRun, "spea": SPEA2HookRun, "sms": SMSHookRun }
 handler = handlers[algo](nobj, "/home/lbezerra/bin/AutoMOEA-continuous-{}D".format(nobj), evals, time, _irace = irace)
 #if algo = "ibea":
 #  handler = IBEAHookRun(nobj, "/home/lbezerra/bin/AutoMOEA-continuous-3D", evals, time, _irace = irace)
