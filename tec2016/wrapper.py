@@ -18,11 +18,14 @@ if algo == "moead":
   bin = "/home/lbezerra/bin/moead_cec"
 elif algo == "cma":
   bin = "/home/lbezerra/bin/mo-cma-es"
+elif algo == "nsga3":
+  bin = "/home/lbezerra/bin/nsga3"
 else:
   bin = "/home/lbezerra/bin/AutoMOEA-continuous-{}D".format(nobj)
 
 handler = None
-handlers = { "ibea": IBEAHookRun, "moga": MOGAHookRun, "hype" : HypeHookRun, "nsga": NSGA2HookRun, "spea": SPEA2HookRun, "sms": SMSHookRun, "moead": MOEADHookRun, "cma": CMAHookRun }
+handlers = { "ibea": IBEAHookRun, "moga": MOGAHookRun, "hype" : HypeHookRun, "nsga": NSGA2HookRun, "spea": SPEA2HookRun, "sms": SMSHookRun, 
+             "moead": MOEADHookRun, "cma": CMAHookRun, "nsga3": NSGA3HookRun }
 handler = handlers[algo](nobj, bin, evals, time, _irace = irace)
 
 handler._parse(sys.argv[offset:])

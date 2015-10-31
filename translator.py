@@ -31,6 +31,10 @@ class MOEADTranslator(OrderedTranslator):
 class CMASharkTranslator(OrderedTranslator):
   order = ("problem", "nobj", "size", "evals", "time", "seed", "pop_size", "sigma", "notion", "indicator", "steady")
 
+class NSGA3CppTranslator(OrderedTranslator):
+  order = ("problem", "nobj", "size", "evals", "time", "seed", "engine", "cross_rate", "eta_cross", 
+            "mut_rate", "mut_vrate", "eta_mut", "de_cr", "de_f", "H", "H2")
+
 class AutoMOEATranslator(Translator):
   all_params = {"pop_size": ["--popSize=", 0], "nb_offspring": ["--nbOffspring=", "100%"], "pop_select": ["--popSelection=", "Random"],
             "pop_setpart": ["--popSetPart=", "Dummy"], "pop_refinement": ["--popRefinement=", "Dummy"], "pop_diversity": ["--popDiversity=", "Dummy"], 

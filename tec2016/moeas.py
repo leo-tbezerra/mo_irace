@@ -1,4 +1,4 @@
-from translator import AutoMOEATranslator, MOEADTranslator, CMASharkTranslator
+from translator import AutoMOEATranslator, MOEADTranslator, CMASharkTranslator, NSGA3CppTranslator
 from tec2016.tec_run import TECHookRun
 class IBEAHookRun(TECHookRun):
   def __init__(self, _nobj, _exe, _evals, _time, _irace, _gen=0):
@@ -190,4 +190,17 @@ class CMAHookRun(TECHookRun):
     self.cand_params["notion"] = self._consumeParam(args)
     self.cand_params["indicator"] = self._consumeParam(args)
     self.cand_params["steady"] = self._consumeParam(args)
+    super()._cmdLine()
+
+class NSGA3HookRun(TECHookRun):
+  def __init__(self, _nobj, _exe, _evals, _time, _irace, _gen=0):
+    super().__init__("NSGA-III", _nobj, _exe, _evals, _time, _irace, _gen, _translator = NSGA3CppTranslator)
+
+  def _parse(self, args):
+    super()._parse(args[0:3])
+    args = args[3:]
+    super()._parseEngine(args, False)
+    self.cand_params["H"] = self._consumeParam(args)
+    if len(args) > 0:
+      self.cand_params["H2"] = self._consumeParam(args)
     super()._cmdLine()
